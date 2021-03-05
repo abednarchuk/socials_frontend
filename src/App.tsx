@@ -1,26 +1,35 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, FC } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+// Redux
+import { getCurrentUser, selectUser, selectUserLoading } from './redux/user/user.slice'
+// Router
+import { Route, Switch } from 'react-router-dom'
+// Components
+import { SignIn } from './components/signin/SignIn'
+import { SignUp } from './components/signup/SignUp'
+import { Navigation } from './components/navigation/Navigation'
+import { Home } from './components/home/Home'
+// MaterialUI
+import { CssBaseline } from '@material-ui/core'
 
-function App() {
+export const App: FC = () => {
+  const user = useSelector(selectUser)
+  const userIsLoading = useSelector(selectUserLoading)
+  const dispatch = useDispatch()
+  useEffect(() => {
+    if (!userIsLoading && !user) {
+      dispatch(getCurrentUser())
+    }
+  }, [])
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <>
+      <Navigation />
+      <CssBaseline />
+      <Switch>
+        <Route path='/' component={Home} exact />
+        <Route path='/signin' component={SignIn} />
+        <Route path='/signup' component={SignUp} />
+      </Switch>
+    </>
+  )
 }
-
-export default App;
